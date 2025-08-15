@@ -1,4 +1,4 @@
-import { Baralho } from "./baralho";
+import { Baralho } from "./baralho.js";
 
 export class Game {
   constructor(players = []) {
