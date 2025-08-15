@@ -1,4 +1,6 @@
 import { WebSocketServer } from "ws";
+import { Game } from "./gameClasses/game";
+import { Player } from "./gameClasses/player";
 
 export default function criarServidor(servidorHTTP) {
   const servidor = new WebSocketServer({ server: servidorHTTP });
