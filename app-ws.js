@@ -1,20 +1,43 @@
 import { WebSocketServer } from "ws";
-import { Game } from "./gameClasses/game";
-import { Player } from "./gameClasses/player";
+import { Game } from "./gameClasses/game.js";
+import { Player } from "./gameClasses/player.js";
+
+const players = [];
+const games = [];
 
 export default function criarServidor(servidorHTTP) {
   const servidor = new WebSocketServer({ server: servidorHTTP });
+  console.log("servidor ws criado");
 
   servidor.on("connection", function connection(socket) {
+    //adiciona instantaneamente ao se conectar
+    players.push(socket);
+
     socket.on("message", function message(data) {
-      socket.send(`Server received: ${data.toString()}`);
+      //handle messages
+
+      const msg = data.toString();
+      console.log(msg);
+
+      try {
+        const msg = JSON.parse(msg);
+
+        if (msg.action);
+        else if (msg.join);
+        else if (msg.updateCash);
+      } catch (err) {
+        //geralmente vai ser pq não é um json :)
+        socket.send("Erro na solicitação do cliente");
+      }
     });
 
     socket.on("close", () => {
-      console.log("se desconectaram");
+      console.log("se desconectaram...");
+      //handle disconnect
     });
 
-    socket.send("Welcome to the WebSocket server!");
+    //mensagem inicial
+    socket.send("Versão 0.1 do servidor!");
   });
 
   return servidor;
