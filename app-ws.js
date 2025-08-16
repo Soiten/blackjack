@@ -16,14 +16,15 @@ export default function criarServidor(servidorHTTP) {
     socket.on("message", function message(data) {
       //handle messages
 
-      const msg = data.toString();
+      let msg = data.toString();
       console.log(msg);
 
       try {
-        const msg = JSON.parse(msg);
+        msg = JSON.parse(msg);
 
-        if (msg.action);
-        else if (msg.join);
+        if (msg.action) {
+          if (msg.action == "pedir") socket.send(JSON.stringify({ naipe: "copas", valor: 1 }));
+        } else if (msg.join);
         else if (msg.updateCash);
       } catch (err) {
         //geralmente vai ser pq não é um json :)
