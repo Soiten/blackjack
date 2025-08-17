@@ -1,8 +1,13 @@
+import newId from "../utils/IdGenerator.js";
+
 export class Player {
-  constructor() {
+  constructor(connection, name) {
     this.mao = [];
     this.dinheiro = 500;
     this.dinheiroApostado = 0;
+    this.connection = connection;
+    this.name = name;
+    this.id = newId();
   }
 
   join() {

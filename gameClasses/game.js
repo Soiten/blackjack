@@ -1,12 +1,19 @@
 import { Baralho } from "./baralho.js";
+import newId from "../utils/IdGenerator.js";
 
 export class Game {
   constructor(players = []) {
+    this.admin = players[0];
     this.players = players;
     this.currentPlayer = 0;
     this.maoCasa = [];
     this.baralho = new Baralho();
     this.jaJogaram = 0;
+    this.id = newId();
+  }
+
+  setAdmin(id) {
+    this.admin = this.players.find((p) => p.id == id);
   }
 
   start() {
