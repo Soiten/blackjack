@@ -1,8 +1,8 @@
 import { WebSocketServer } from "ws";
-import { Game } from "./gameClasses/game.js";
-import { Player } from "./gameClasses/player.js";
+import { createGame } from "./handlers/gameHandler.js";
+import { createPlayer } from "./handlers/playerHandler.js";
 
-const players = [];
+const connections = [];
 const games = [];
 
 export default function criarServidor(servidorHTTP) {
@@ -10,22 +10,27 @@ export default function criarServidor(servidorHTTP) {
   console.log("servidor ws criado");
 
   servidor.on("connection", function connection(socket) {
-    //adiciona instantaneamente ao se conectar
-    players.push(socket);
-
     socket.on("message", function message(data) {
-      //handle messages
-
       let msg = data.toString();
       console.log(msg);
 
       try {
         msg = JSON.parse(msg);
+        msg.socket = socket;
 
-        if (msg.action) {
-          if (msg.action == "pedir") socket.send(JSON.stringify({ naipe: "copas", valor: 1 }));
-        } else if (msg.join);
-        else if (msg.updateCash);
+        switch (msg.type) {
+          case "createPlayer":
+            createPlayer(msg);
+            break;
+
+          case "hostGame":
+            msg.array = games;
+            createGame(msg);
+            break;
+
+          case "startGame":
+            break;
+        }
       } catch (err) {
         //geralmente vai ser pq não é um json :)
         socket.send("Erro na solicitação do cliente");
