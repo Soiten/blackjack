@@ -31,6 +31,7 @@ export default function criarServidor(servidorHTTP) {
 
           case "hostGame":
             msg.array = games;
+            msg.player = connections.find((p) => p.connection == socket);
             createGame(msg);
             break;
 

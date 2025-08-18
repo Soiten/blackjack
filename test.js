@@ -4,9 +4,9 @@ const socket = new WebSocket("ws://localhost:3000");
 
 socket.on("open", () => {
   console.log("Conectado ao servidor!");
-  // socket.send(JSON.stringify({ type: "hostGame" }));
-  // socket.send(JSON.stringify({ type: "createPlayer", data: { name: "joaozin" } }));
-  // socket.send(JSON.stringify({ type: "getGamelist" }));
+  socket.send(JSON.stringify({ type: "createPlayer", data: { name: "joaozin" } }));
+  socket.send(JSON.stringify({ type: "hostGame" }));
+  socket.send(JSON.stringify({ type: "getGamelist" }));
 });
 
 socket.on("message", (data) => {
