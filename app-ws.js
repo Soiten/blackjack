@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import { createGame, listGames } from "./handlers/gameHandler.js";
+import { createGame, listGames, startGame } from "./handlers/gameHandler.js";
 import { createPlayer } from "./handlers/playerHandler.js";
 
 const connections = [];
@@ -17,25 +17,24 @@ export default function criarServidor(servidorHTTP) {
       try {
         msg = JSON.parse(msg);
         msg.socket = socket;
+        msg.games = games;
+        msg.players = connections;
 
         switch (msg.type) {
           case "getGamelist":
-            msg.array = games;
             listGames(msg);
             break;
 
           case "createPlayer":
-            msg.array = connections;
             createPlayer(msg);
             break;
 
           case "hostGame":
-            msg.array = games;
-            msg.player = connections.find((p) => p.connection == socket);
             createGame(msg);
             break;
 
           case "startGame":
+            startGame(msg);
             break;
         }
       } catch (err) {

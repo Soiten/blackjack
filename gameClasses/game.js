@@ -50,7 +50,7 @@ export class Game {
       case "double":
         player.addCard(this.baralho.takeRandom());
         player.double();
-        this._checkPlayerLoss();
+        this._checkPlayerLoss(player);
         break;
     }
   }
@@ -66,4 +66,37 @@ export class Game {
     this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
     this.jaJogaram++;
   }
+
+  get state() {
+    const state = {
+      cartasCasa: null,
+      players: this.players.map((p) => {
+        return { mao: p.mao, name: p.name, dinheiro: p.dinheiro, dinheiroApostado: p.dinheiroApostado };
+      }),
+    };
+
+    //mostrar só uma das cartas ou a mao toda
+    const MOSTRAR_TUDO = this.jaJogaram >= this.players.length;
+    state.cartasCasa = MOSTRAR_TUDO ? this.maoCasa : this.maoCasa[0];
+
+    return state;
+  }
+}
+
+export function valorDaMao(m) {
+  let soma = 0;
+  let numeroDeAs = 0;
+  for (let card of m) {
+    if (card.valor == 1) numeroDeAs += 1;
+    else soma += card.valor;
+  }
+
+  if (numeroDeAs > 0) {
+    for (let i = 0; i < numeroDeAs; i++) {
+      if (soma + 11 <= 21) soma += 11;
+      else soma += 1;
+    }
+  }
+
+  return soma;
 }
