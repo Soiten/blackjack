@@ -6,11 +6,11 @@
 
 1. [About](#about)
 2. [Documentation](#documentation)
-   1.1. [Protocol](#protocol)
-   1.2. [Server-side](#server-side)
-   1.3. [Client-side](#client-side)
-3. [How to run](#how-to-run)
-4. [Team](#team)
+   1. [Protocol](#protocol)
+   2. [Server-side](#server-side)
+   3. [Client-side](#client-side)
+4. [How to run](#how-to-run)
+5. [Team](#team)
 
 ## About
 
