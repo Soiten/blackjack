@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import { createGame } from "./handlers/gameHandler.js";
+import { createGame, listGames } from "./handlers/gameHandler.js";
 import { createPlayer } from "./handlers/playerHandler.js";
 
 const connections = [];
@@ -19,7 +19,13 @@ export default function criarServidor(servidorHTTP) {
         msg.socket = socket;
 
         switch (msg.type) {
+          case "getGamelist":
+            msg.array = games;
+            listGames(msg);
+            break;
+
           case "createPlayer":
+            msg.array = connections;
             createPlayer(msg);
             break;
 
