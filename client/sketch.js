@@ -1,16 +1,16 @@
 let server;
 let ui;
-let tela;
 
 function setup() {
   createCanvas(400, 400);
-  tela = "inicio";
   server = connectToServer();
   ui = setupUI();
+  ui.reset();
 }
 
+//MARK: Draw loop
 function draw() {
-  switch (tela) {
+  switch (ui.tela) {
     case "inicio":
       background(220);
       break;
@@ -34,6 +34,7 @@ function draw() {
 //   }
 // }
 
+//MARK: Server & protocols
 function connectToServer() {
   const server = new WebSocket("ws://localhost:3000");
   server.onopen = () => {
@@ -48,13 +49,12 @@ function connectToServer() {
       switch (msg.type) {
         case "playerCreated":
           localStorage.setItem("myId", msg.data.id);
-          tela = "lista jogos";
           ui.gamesList = getGames();
           break;
 
         case "gameCreated":
           localStorage.setItem("currentGame", msg.data.id);
-          tela = "jogo";
+          mudarTela("jogo");
           break;
 
         case "gamesList":
@@ -73,51 +73,76 @@ function connectToServer() {
   return server;
 }
 
-//MARK: FIX: change from arry to obj
+//MARK: UI things
 function setupUI() {
-  textSize(20);
+  textSize(14);
 
-  const ui = { inputs: [], buttons: [], gamesList: [] };
+  const ui = {
+    inputs: {},
+    buttons: {},
+    gamesList: [],
+    tela: "inicio",
+    myName: undefined,
+    money: undefined,
 
-  const i1 = createInput();
-  i1.position(200, 200);
-  i1.elt.placeholder = "Seu nome";
-  ui.inputs.push(i1);
+    addButton: function (name, button) {
+      this.buttons[name] = button;
+    },
+    getButton: function (name) {
+      return this.buttons[name];
+    },
+    addInput: function (name, input) {
+      this.inputs[name] = input;
+    },
+    getInput: function (name) {
+      return this.inputs[name];
+    },
+    clear: function () {
+      for (let b of Object.values(this.buttons)) {
+        b.hide();
+      }
+      for (let i of Object.values(this.inputs)) {
+        i.hide();
+      }
+    },
+    reset: function () {
+      mudarTela(this.tela);
+    },
+  };
+
+  const name = createInput();
+  name.position(200, 200);
+  name.elt.placeholder = "Seu nome";
 
   const confirm = createButton("Confirmar");
   confirm.position(200, 220);
+  confirm.mouseClicked(() => {
+    const nome = name.value();
+    server.json({ type: "createPlayer", data: { name: nome } });
+    mudarTela("lista jogos");
+  });
 
   const atualizarLista = createButton("Atualizar");
   atualizarLista.position(20, 30);
   atualizarLista.mouseClicked(() => {
     getGames();
   });
-  atualizarLista.hide();
 
   const hospedar = createButton("Hospedar Jogo");
   hospedar.mouseClicked(() => {
     server.json({ type: "hostGame" });
-    atualizarLista.hide();
-    hospedar.hide();
   });
   hospedar.position(20, height - 30);
-  hospedar.hide();
 
-  confirm.mouseClicked(() => {
-    const nome = i1.value();
-    server.json({ type: "createPlayer", data: { name: nome } });
-    confirm.hide();
-    i1.hide();
-    atualizarLista.show();
-    hospedar.show();
-  });
-
-  ui.buttons.push(hospedar);
-  ui.buttons.push(atualizarLista);
-  ui.buttons.push(confirm);
+  ui.addInput("name", name);
+  ui.addButton("confirm name", confirm);
+  ui.addButton("refresh games", atualizarLista);
+  ui.addButton("host game", hospedar);
 
   return ui;
 }
+
+//MARK: Misc
 
 function showGamelist() {
   let y = 50;
@@ -136,4 +161,25 @@ function showGamelist() {
 
 function getGames() {
   server.json({ type: "getGamelist" });
+}
+
+function mudarTela(tela) {
+  if (!ui) return;
+  ui.tela = tela;
+  ui.clear();
+
+  switch (tela) {
+    case "inicio":
+      ui.getInput("name").show();
+      ui.getButton("confirm name").show();
+      break;
+
+    case "lista jogos":
+      ui.getButton("refresh games").show();
+      ui.getButton("host game").show();
+      break;
+
+    case "jogo":
+      break;
+  }
 }
