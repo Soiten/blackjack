@@ -8,6 +8,7 @@ export class Player {
     this.connection = connection;
     this.name = name;
     this.id = newId();
+    this.emJogo = false;
   }
 
   join() {
@@ -34,5 +35,15 @@ export class Player {
 
   clearHand() {
     this.mao = [];
+  }
+
+  get gameInfo() {
+    return {
+      id: this.id,
+      name: this.name,
+      dinheiro: this.dinheiro,
+      dinheiroApostado: this.dinheiroApostado,
+      mao: this.mao,
+    };
   }
 }
