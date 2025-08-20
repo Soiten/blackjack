@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import { createGame, listGames, startGame } from "./handlers/gameHandler.js";
+import { createGame, joinGame, listGames, startGame } from "./handlers/gameHandler.js";
 import { createPlayer } from "./handlers/playerHandler.js";
 
 const connections = [];
@@ -31,6 +31,10 @@ export default function criarServidor(servidorHTTP) {
 
           case "hostGame":
             createGame(msg);
+            break;
+
+          case "joinGame":
+            joinGame(msg);
             break;
 
           case "startGame":
