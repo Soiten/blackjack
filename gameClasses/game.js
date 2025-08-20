@@ -16,6 +16,10 @@ export class Game {
     this.admin = this.players.find((p) => p.id == id);
   }
 
+  addPlayer(player) {
+    this.players.push(player);
+  }
+
   start() {
     //duas cartas pra casa
     this.maoCasa.push(this.baralho.takeRandom());
