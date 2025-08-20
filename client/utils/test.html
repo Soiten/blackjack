@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="display: flex; justify-content: left; gap: 30px">
+    <div style="display: flex; gap: 5px; flex-direction: column">
+      <div>
+        <input type="text" name="nick" id="nick" placeholder="Seu nome" />
+        <button onclick="server.json({type:'createPlayer', data:{name: getValue('nick')}})">"Criar conta"</button>
+      </div>
+      <button onclick="server.json({type:'getGamelist'})">Pegar lista de jogos</button>
+      <br />
+      <button onclick="server.json({type:'hostGame'})">Criar uma sala</button>
+      <div>
+        <input type="text" name="" id="idsala" placeholder="ID da sala" />
+        <button onclick="server.json({type:'joinGame', data:{id:getValue('idsala') }})">Entrar em uma sala</button>
+      </div>
+      <br />
+      <button onclick="">Começar jogo atual</button>
+      <button onclick="">Sair do jogo atual</button>
+      <button onclick="">Pedir carta</button>
+      <button onclick="">Parar jogada</button>
+      <button onclick="">Pedir double</button>
+    </div>
+    <div>
+      <p><strong>Log</strong></p>
+      <p id="log"></p>
+    </div>
+
+    <script>
+      const server = new WebSocket("ws://localhost:3000");
+
+      server.onopen = () => log("Entrei no servidor");
+      server.onclose = () => log("Conexão terminada");
+      server.onmessage = (ev) => {
+        console.log(ev.data);
+
+        try {
+          const msg = JSON.parse(ev.data);
+          switch (msg.type) {
+            case "gameCreated":
+              log(`Sala criada! ID ${msg.data.id}`);
+              break;
+
+            case "playerCreated":
+              log(`Jogador criado. Seu id é ${msg.data.id}.`);
+              break;
+
+            case "gamesList":
+              if (msg.data.list.length) log(`Lista de jogos recebida.`);
+              else {
+                log("Nenhum jogo encontrado");
+                break;
+              }
+              let i = 1;
+              for (let jogo of msg.data.list) {
+                log(`Sala ${i}: ${jogo.id}, ${jogo.players} jogadores`);
+                i++;
+              }
+              break;
+          }
+        } catch (error) {
+          log("mensagem estranha recebida: " + ev.data);
+        }
+      };
+
+      server.json = (obj) => {
+        server.send(JSON.stringify(obj));
+      };
+
+      function log(msg) {
+        const p = document.createElement("p");
+        p.textContent = msg;
+        p.style = "background-color: #a5f27e";
+        setTimeout(() => {
+          p.style = "";
+        }, 2000);
+        const list = document.getElementById("log");
+        list.appendChild(p);
+        if (list.childElementCount > 12) {
+          while (list.childElementCount > 12) {
+            list.removeChild(list.firstChild);
+          }
+        }
+      }
+
+      function getValue(elementid) {
+        return document.getElementById(elementid).value;
+      }
+    </script>
+  </body>
+</html>
