@@ -3,6 +3,7 @@ import newId from "../utils/IdGenerator.js";
 
 export class Game {
   constructor(players = []) {
+    players.forEach((p) => (p.emJogo = true));
     this.admin = players[0];
     this.players = players;
     this.currentPlayer = 0;
@@ -17,6 +18,7 @@ export class Game {
   }
 
   addPlayer(player) {
+    player.emJogo = true;
     this.players.push(player);
   }
 
@@ -33,14 +35,11 @@ export class Game {
 
     //escolhe quem inicia aleatoriamente
     this.currentPlayer = Math.floor(Math.random() * this.players.length);
-
-    //começa o timer
   }
 
-  callRound(acao) {
-    const player = this.players[this.currentPlayer];
+  makeChoice(acao) {
+    const player = this.playerDaVez;
 
-    //ele tem que escolher a ação dele
     switch (acao) {
       case "pedir":
         player.addCard(this.baralho.takeRandom());
@@ -84,6 +83,10 @@ export class Game {
     state.cartasCasa = MOSTRAR_TUDO ? this.maoCasa : this.maoCasa[0];
 
     return state;
+  }
+
+  get playerDaVez() {
+    return this.players[this.currentPlayer];
   }
 }
 
