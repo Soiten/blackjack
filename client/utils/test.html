@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,7 +25,7 @@
       <button onclick="">Parar jogada</button>
       <button onclick="">Pedir double</button>
     </div>
-    <div>
+    <div style="max-width: 50%">
       <p><strong>Log</strong></p>
       <p id="log"></p>
     </div>
@@ -60,6 +60,18 @@
                 log(`Sala ${i}: ${jogo.id}, ${jogo.players} jogadores`);
                 i++;
               }
+              break;
+
+            case "gameJoined":
+              log(`Você entrou na sala ${msg.data.id}!`);
+              log(`Estado do jogo recebido: ${JSON.stringify(msg.data.state)}`);
+              break;
+
+            case "playerJoined":
+              log(`Um novo jogador entrou na sala: ${msg.data.player.name}, ID ${msg.data.player.id}`);
+              break;
+
+            case "playerAction":
               break;
           }
         } catch (error) {
