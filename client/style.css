@@ -1,0 +1,12 @@
+#list {
+  padding: 50px;
+  width: 300px;
+  max-height: 200px;
+  overflow-y: auto;
+  gap: 10px;
+}
+
+.item {
+  background-color: green;
+  border-radius: 15px;
+}
